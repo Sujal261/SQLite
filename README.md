@@ -20,3 +20,22 @@ It gets the virtual machine bytecode(this is a compiled program that can operate
 We can think Virtual machine as big switch statement on the type of bytecode instruction. 
 <br> 
 #### We will start with making REPL 
+- From the REPL we use ./exit to get out of the terminal. 
+- insert : to insert the values for now  id name and email
+- select: to select the values from the table. 
+
+#### What we will do to store the rows. 
+- Store the rows in blocks of memory called pages. 
+- Each page stores as many rows as it can fit. 
+- Rows are serialized into a compact representation with each page. 
+- Keep a fixed size of array of pointers to pages.
+
+The layout of a serialized row look likes: 
+
+|column|size(bytes)|offset|
+|------|-----------|------|
+|id|4|0|
+|username|32|4|
+|email|255|36|
+|total|291||
+
