@@ -1,19 +1,15 @@
-#include"utlis.h"
-#include<sys/types.h>
-#include<stdbool.h>
 #include<stdlib.h>
 #include<string.h>
 #include<stdio.h>
+#include<sys/types.h>
+#include"../include/utlis.h"
 
 void print_prompt(){
     printf("db> ");
 }
 
 void read_input(InputBuffer* input_buffer){
-    char tokens[10][30];
-    int count =0;
-    int c=0;
-    int b=0;
+    
     ssize_t bytereads = getline(&(input_buffer->buffer),&(input_buffer->buffer_length), stdin);
     if(bytereads<=0){
         printf("error reading input\n");

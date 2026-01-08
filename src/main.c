@@ -1,12 +1,10 @@
 #include<stdbool.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
-#include<sys/types.h>
-#include"type.h"
-#include"utlis.h"
-#include"compiler.h"
-#include"table.h"
+#include"../include/type.h"
+#include"../include/utlis.h"
+#include"../include/compiler.h"
+#include"../include/table.h"
 
 
 int main(int argc, char* argv[]){
@@ -40,6 +38,7 @@ int main(int argc, char* argv[]){
         switch(execute_statement(statement,table )){
             case EXECUTE_SUCCESS:
             printf("Executed\n");
+            break;
             case EXECUTE_TABLE_FULL:
             printf("Error: Table full.\n");
             break;

@@ -1,7 +1,8 @@
-#include"table.h"
-#include"row.h"
 #include<string.h>
 #include<stdlib.h>
+#include<stdio.h>
+#include"../include/table.h"
+#include"../include/row.h"
 
 void serialize_row(Row* source, void* destination){
     memcpy(destination+ID_OFFSET, &(source->id), ID_SIZE);
@@ -23,4 +24,7 @@ void* row_slot(struct Table* table, uint32_t row_num){
     uint32_t row_offset = row_num % ROWS_PER_PAGE; 
     uint32_t byte_offset = row_offset * ROW_SIZE; 
     return page+byte_offset;
+}
+void print_row(Row* row){
+    printf("(%d,%s,%s)\n", row->id, row->username,row->email );
 }

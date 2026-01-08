@@ -1,6 +1,4 @@
 #pragma once
-#include<stdint.h>
-#include<string.h>
 #include"type.h"
 
 
@@ -20,3 +18,5 @@ void serialize_row(Row* source, void* destination);
 
 void deserialize_row(void* source, Row* destination);
 void* row_slot(struct Table* table, uint32_t row_num);
+
+void print_row(Row* row);

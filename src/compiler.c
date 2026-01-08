@@ -1,9 +1,10 @@
-#include"type.h"
-#include"utlis.h"
+#include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include"row.h"
-#include"table.h"
+#include"../include/type.h"
+#include"../include/utlis.h"
+#include"../include/row.h"
+#include"../include/table.h"
 
 MetaCommandResult do_meta_action(InputBuffer* input_buffer){
     if((strcmp(input_buffer->buffer,"./exit"))==0){
@@ -47,7 +48,7 @@ ExecuteResult execute_select(Statement* statement, Table* table){
     Row row; 
     for(uint32_t i=0; i<table->num_rows;i++){
         deserialize_row(row_slot(table, i), &row);
-        // print_row(&row);
+        print_row(&row);
     }
     return EXECUTE_SUCCESS;
 

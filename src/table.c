@@ -1,7 +1,6 @@
-#include"table.h"
-#include<stdint.h>
-#include"row.h"
-#include<stddef.h>
+#include<stdlib.h>
+#include"../include/table.h"
+#include"../include/row.h"
 Table* new_table(){
     Table* table = (Table*)malloc(sizeof(Table));
     table->num_rows=0;
