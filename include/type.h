@@ -21,6 +21,8 @@ typedef struct{
 typedef enum{
     PREPARE_SUCCESS,
     PREPARE_FAILURE, 
+    PREPARE_STRING_TOO_LONG,
+    PREPARE_NEGATIVE_ID,
     PREPARE_SYNTAX_ERROR
 
 } PrepareResult;

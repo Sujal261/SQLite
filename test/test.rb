@@ -53,8 +53,8 @@ describe 'database' do
     ])
   end
   it 'allows to inserting strings that are of maximum length' do 
-    long_username = "a"*33
-    long_email ="a"*256
+    long_username = "a"*34
+    long_email ="a"*257
     script =[
       "insert 1 #{long_username} #{long_email}",
       "select",
@@ -63,6 +63,19 @@ describe 'database' do
     result = run_script(script)
     expect(result).to match_array([
       "db> String is too long.",
+      "db> Executed",
+      "db> ",
+    ])
+  end
+  it 'prints an error message if id is negative' do 
+    script=[
+      "insert -1 sujal sujal",
+      "select",
+      "./exit",
+    ]
+    result = run_script(script)
+    expect(result).to match_array([
+      "db> Negative id is not allowed.",
       "db> Executed",
       "db> ",
     ])

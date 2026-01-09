@@ -44,3 +44,38 @@ sizeof(((Struct*)0)->Attribute):<br>
 It is useful when we want the size of a struct member without creating a struct object. 
 
 
+### Never thought I would use ruby to run the tests but it was good working with it. 
+```
+ def run_script(commands)
+    raw_output = nil
+    IO.popen("./db", "r+") do |pipe|
+      commands.each do |command|
+        pipe.puts command
+      end
+
+      pipe.close_write
+
+      # Read entire output
+      raw_output = pipe.gets(nil)
+    end
+    raw_output.split("\n")
+  end
+```
+this is the function sort of thing in Ruby
+<br> 
+```
+it 'inserts and retrieves a row' do
+    result = run_script([
+      "insert 1 user1 person1@example.com",
+      "select",
+      ".exit",
+    ])
+    expect(result).to match_array([
+      "db > Executed.",
+      "db > (1, user1, person1@example.com)",
+      "Executed.",
+      "db > ",
+    ])
+  end
+```
+this is how we make test cases in rspec.
