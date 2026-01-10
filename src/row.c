@@ -1,6 +1,7 @@
 #include<string.h>
 #include<stdlib.h>
 #include<stdio.h>
+#include<errno.h>
 #include"../include/table.h"
 #include"../include/row.h"
 
@@ -47,8 +48,6 @@ void* get_page(Pager* pager, uint32_t page_num){
             }
         }
         pager->pages[page_num]  = page; 
-
-
     }
     return pager->pages[page_num];
 }

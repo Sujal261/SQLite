@@ -79,3 +79,40 @@ it 'inserts and retrieves a row' do
   end
 ```
 this is how we make test cases in rspec.
+
+```
+int fd = open(filename, O_RDWR | O_CREAT, S_IWUSR | S_IRUSR);
+```
+This line opens a file and returns a file descriptor. This is system call in Linux/Unix. It returns an integer file descriptor. 
+<br>
+open():
+```
+Syntax:
+open(pathname, flags, mode)
+```
+Flags are: <br>
+O_RDWR- Open the file for read and write. 
+<br>
+O_CREAT: If the file doesnot exist, create it. Flags can be combined using |. 
+
+mode: <br>
+S_IWUSR: User has write permission. 
+<br>
+S_IRUSR: User has read permission.
+
+lseek():
+```
+lseek(int fd, off_t offset, int whence);
+```
+fd= file descriptor(returned by open())<br>
+offset = how many bytes to move.<br>
+whence = reference point
+<br>
+SEEK_SET = Set the offset to offset bytes from the beginning of the file. 
+<br>
+SEEK_CUR = Set the offset to offset bytes from the current position. 
+<br>
+SEEK_END = Set the offset to offset bytes from the end of the file. 
+
+
+

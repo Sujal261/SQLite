@@ -3,7 +3,7 @@
 #include"utlis.h"
 #include"table.h"
 
-MetaCommandResult do_meta_action(InputBuffer* input_buffer);
+MetaCommandResult do_meta_action(InputBuffer* input_buffer, Table* table);
 PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement);
 
 ExecuteResult execute_insert(Statement* statement, Table* table);

@@ -16,6 +16,8 @@ typedef struct Table{
     Pager* pager;
 }Table;
 
-Table* new_table();
-
+void db_close(Table* table);
+Table* db_open(const char* filename);
+Pager* pager_open(const char* filename);
+void pager_flush(Pager* pager, uint32_t page_num, uint32_t size);
 void free_table(Table* table);
