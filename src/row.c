@@ -2,6 +2,9 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<errno.h>
+#include<unistd.h>
+#include<sys/stat.h>
+#include<fcntl.h>
 #include"../include/table.h"
 #include"../include/row.h"
 

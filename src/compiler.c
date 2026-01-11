@@ -38,8 +38,6 @@ PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement){
     strcpy(statement->row_to_insert.username, username);
     strcpy(statement->row_to_insert.email, email);
     return PREPARE_SUCCESS;
-
-    
 }
 
 
