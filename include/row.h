@@ -1,8 +1,8 @@
 #pragma once
 #include"type.h"
 #include"table.h"
-
-
+#include<stdbool.h>
+#include<stdint.h>
 
 #define size_of_attribute(Struct, Attribute) sizeof(((Struct*)0)->Attribute)
 
@@ -14,6 +14,16 @@
 #define EMAIL_OFFSET  (USERNAME_OFFSET+USERNAME_SIZE)
 #define ROW_SIZE  (ID_SIZE+USERNAME_SIZE+EMAIL_SIZE)
 struct Table; 
+
+typedef struct{
+    Table* table; 
+    uint32_t row_num;
+    bool end_of_table;
+
+}Cursor;
+
+Cursor* table_start(Table* table);
+Cursor* table_end(Table* table);
 void serialize_row(Row* source, void* destination);
 
 void deserialize_row(void* source, Row* destination);
