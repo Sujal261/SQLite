@@ -39,3 +39,24 @@ The layout of a serialized row look likes:
 |email|255|36|
 |total|291||
 
+### B-Tree
+The B-tree is the data structure SQLite uses to represent both tables and indexes. Characteristics of B-Tree:
+1. Searching for a particular value is fast(logarithmic time). 
+2. Inserting / deleting a value we have already found is fast. (constant time to rebalance).
+3. Traversing a range of values is fast(unlike a hash map).
+<br>
+
+|For m B Tree|Internal node|Leaf node|
+|------------|-------------|---------|
+|stores|keys and pointers to m children|keys and values|
+|number of pointers|number of keys+1|none|
+|number of values|none|number of keys|
+|key purpose|used for routing|paired with value|
+|stores values|no|yes|
+
+Why do we stores the table as Trees?
+<br>
+Pages can contain metadata, primary keys and data which helps for indexes.Insertion happens in O(nlogn). Deletion also happens in O(nlogn). Lookup by id happens in O(nlogn). Duto these reasons we use Trees as our primary data structure to stores the keys. 
+
+
+

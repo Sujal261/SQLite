@@ -7,12 +7,13 @@
 #include<fcntl.h>
 #include"../include/table.h"
 #include"../include/row.h"
+#include"../include/tree.h"
 
 Cursor* table_start(Table* table){
     Cursor* cursor = malloc(sizeof(Cursor));
     cursor->table = table; 
-    cursor->row_num = 0; 
-    cursor->end_of_table = (table->num_rows == 0);
+    cursor->page_num = table->root_page_num; 
+    cursor->cell_num =0;
 
     return cursor;
 }
@@ -20,7 +21,9 @@ Cursor* table_start(Table* table){
 Cursor* table_end(Table* table){
     Cursor* cursor = malloc(sizeof(Cursor));
     cursor->table = table; 
-    cursor->row_num = table->num_rows; 
+    void* root_node = get_page(table->pager, table->root_page_num);
+    uint32_t num_cells = *leaf_node_num_cells(root_node);
+    cursor->cell_num = num_cells;
     cursor->end_of_table = true;
     return cursor;
 }
@@ -45,17 +48,16 @@ void deserialize_row(void* source, Row* destination){
 // }
 
 void* cursor_value(Cursor* cursor){
-    uint32_t row_num = cursor->row_num;
-    uint32_t page_num = row_num/ROWS_PER_PAGE; 
+    uint32_t page_num = cursor->page_num;  
     void* page = get_page(cursor->table->pager, page_num);
-    uint32_t row_offset = row_num % ROWS_PER_PAGE; 
-    uint32_t byte_offset = row_num * ROW_SIZE; 
-    return page+byte_offset;
+    return leaf_node_value(page, cursor->cell_num);
 }
 void cursor_advance(Cursor* cursor){
-    cursor->row_num+=1; 
-    if(cursor->row_num >= cursor->table->num_rows){
-        cursor->end_of_table = true; 
+    uint32_t page_num = cursor->page_num; 
+    void* node = get_page(cursor->table->pager, page_num);
+    cursor->cell_num +=1; 
+    if(cursor->cell_num >= (*leaf_node_num_cells(node))){
+        cursor->end_of_table = true;
     }
 }
 
@@ -84,6 +86,9 @@ void* get_page(Pager* pager, uint32_t page_num){
             }
         }
         pager->pages[page_num]  = page; 
+        if(page_num >= pager->num_pages){
+            pager->num_pages = page_num+1;
+        }
     }
     return pager->pages[page_num];
 }
