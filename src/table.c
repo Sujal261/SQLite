@@ -4,9 +4,11 @@
 #include<sys/stat.h>
 #include<fcntl.h>
 #include<errno.h>
+#include<string.h>
 #include"../include/table.h"
 #include"../include/row.h"
 #include"../include/tree.h"
+
 void db_close(Table* table){
     Pager* pager = table->pager; 
    

@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
     while(true){
         print_prompt(); 
         read_input(input_buffer); 
-        if(input_buffer->buffer[0],"."){
+        if(input_buffer->buffer[0]=="."){
             switch(do_meta_action(input_buffer, table)){
                 case METACOMMAND_SUCCESS:
                 continue;

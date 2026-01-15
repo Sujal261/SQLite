@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build C Program",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "*.c",          // compile all .c files in src
+                "-g",           // include debug info
+                "-o",
+                "a"             // executable name
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src",
+                "shell": {
+                    "executable": "/bin/bash",
+                    "args": ["-i","-c"]
+                }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true                // default build task
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}

@@ -1,5 +1,6 @@
 #pragma once
 #include<stdint.h>
+
 #define PAGE_SIZE  4096
 #define TABLE_MAX_PAGES  100
 
@@ -19,5 +20,5 @@ typedef struct Table{
 void db_close(Table* table);
 Table* db_open(const char* filename);
 Pager* pager_open(const char* filename);
-void pager_flush(Pager* pager, uint32_t page_num, uint32_t size);
+void pager_flush(Pager* pager, uint32_t page_num);
 void free_table(Table* table);
