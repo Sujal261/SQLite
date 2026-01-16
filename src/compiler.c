@@ -7,6 +7,8 @@
 #include"../include/table.h"
 #include"../include/tree.h"
 
+
+
 MetaCommandResult do_meta_action(InputBuffer* input_buffer, Table* table){
     if((strcmp(input_buffer->buffer,"./exit"))==0){
         db_close(table);
@@ -70,7 +72,9 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
 ExecuteResult execute_insert(Statement* statement, Table* table){
     void* node = get_page(table->pager, table->root_page_num);
     if((*leaf_node_num_cells(node)>=LEAF_NODE_MAX_CELLS)){
+
         return EXECUTE_TABLE_FULL;
+        
     }
     Row* row_to_insert =&(statement->row_to_insert);
     Cursor* cursor = table_end(table);

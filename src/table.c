@@ -12,11 +12,11 @@
 void db_close(Table* table){
     Pager* pager = table->pager; 
    
-    for(uint32_t i =0; i<pager->num_pages;i++){
+    for(uint32_t i =0; i< pager->num_pages;i++){
         if(pager->pages[i]==NULL){
             continue;
         }
-        pager_flush(pager, 1);
+        pager_flush(pager, i);
         free(pager->pages[i]);
         pager->pages[i]=NULL;
     }
@@ -40,7 +40,6 @@ void db_close(Table* table){
 }
 Table* db_open(const char* filename){
     Pager* pager = pager_open(filename);
-    uint32_t num_rows = pager->file_length/ROW_SIZE;
     Table* table = malloc(sizeof(Table));
     table->pager = pager; 
     table->root_page_num =0;
