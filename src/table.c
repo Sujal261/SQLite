@@ -68,7 +68,6 @@ Pager* pager_open(const char* filename){
     }
     for(uint32_t i =0; i<TABLE_MAX_PAGES;i++){
         pager->pages[i] = NULL;
-
     }
     return pager;
 }
