@@ -1,6 +1,7 @@
 #pragma once
 #include"type.h"
 #include"table.h"
+#include"tree.h"
 #include<stdbool.h>
 #include<stdint.h>
 
@@ -24,7 +25,8 @@ typedef struct{
 }Cursor;
 
 Cursor* table_start(Table* table);
-Cursor* table_end(Table* table);
+Cursor* table_find(Table* table, uint32_t key);
+Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key);
 void serialize_row(Row* source, void* destination);
 
 void deserialize_row(void* source, Row* destination);
@@ -33,3 +35,4 @@ void cursor_advance(Cursor* cursor);
 void print_row(Row* row);
 
 void* get_page(Pager* pager, uint32_t page_num);
+NodeType get_node_type(void* node);

@@ -61,6 +61,13 @@ Cursor* lead_node_find(Table* table, uint32_t page_num, uint32_t key){
     cursor->cell_num = min_index;
     return cursor;
 }
+
+NodeType get_node_type(void* node){
+    uint8_t value = *((uint8_t*)(node+NODE_TYPE_OFFSET));
+    return (NodeType)value;
+}
+
+
 void serialize_row(Row* source, void* destination){
     memcpy(destination+ID_OFFSET, &(source->id), ID_SIZE);
     memcpy(destination+USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
