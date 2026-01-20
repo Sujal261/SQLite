@@ -94,8 +94,8 @@ void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value){
     void* node = get_page(cursor->table->pager, cursor->page_num);
     uint32_t num_cells = *leaf_node_num_cells(node);
     if(num_cells >= LEAF_NODE_MAX_CELLS){
-        printf("Need to implement splitting a leaf node.\n");
-        exit(EXIT_FAILURE);
+        leaf_node_split_and_insert(cursor, key, value);
+        return;
     }
     if(cursor->cell_num < num_cells){
         for(uint32_t i = num_cells; i> cursor->cell_num; i--){
@@ -106,4 +106,33 @@ void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value){
     *(leaf_node_num_cells(node)) +=1; 
     *(leaf_node_key(node, cursor->cell_num))= key; 
     serialize_row(value, leaf_node_value(node,cursor->cell_num ));
+}
+
+void leaf_node_split_and_insert(Cursor* cursor, uint32_t key, Row* value){
+    void* old_node = get_page(cursor->table->pager, cursor->page_num);
+    uint32_t new_page_num = get_unused_page_num(cursor->table->pager);
+    void* new_node = get_page(cursor->table->pager, new_page_num);
+    initialize_leaf_node(new_node);
+    for(int32_t i = LEAF_NODE_MAX_CELLS;i>=0;i--){
+        void* destination_node;
+        if(i>=LEA){
+            destination_node = new_node;
+        }else{
+            destination_node = old_node;
+        }
+        uint32_t index_within_node = i % LEAF_NODE_CELL_SIZE;
+        void* destination = leaf_node_cell(destination_node, index_within_node);
+        if(i == cursor->cell_num){
+            serialize_row(value, destination);
+
+        }else if(i> cursor->cell_num){
+            memcpy(destination, leaf_node_cell(old_name,i-1), LEAF_NODE_CELL_SIZE);
+
+
+        }else{
+            memcpy(destination, leaf_node_cell(old_node, i), LEAF_NODE_CELL_SIZE);
+        }
+    }
+
+
 }

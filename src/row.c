@@ -8,6 +8,8 @@
 #include"../include/table.h"
 #include"../include/row.h"
 #include"../include/tree.h"
+#include<sys/types.h>
+#include"../include/type.h"
 
 Cursor* table_start(Table* table){
     Cursor* cursor = malloc(sizeof(Cursor));
@@ -34,7 +36,7 @@ Cursor* table_find(Table* table, uint32_t key){
         exit(EXIT_FAILURE);
     }
 }
-Cursor* lead_node_find(Table* table, uint32_t page_num, uint32_t key){
+Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key){
     void* node  = get_page(table->pager, page_num);
     uint32_t num_cells = *leaf_node_num_cells(node);
     Cursor* cursor = malloc(sizeof(Cursor));
@@ -104,7 +106,8 @@ void cursor_advance(Cursor* cursor){
 void print_row(Row* row){
     printf("(%d,%s,%s)\n", row->id, row->username,row->email );
 }
-void* get_page(Pager* pager, uint32_t page_num){
+void* get_page(void* pager_ptr, uint32_t page_num){
+    Pager* pager = (Pager*)pager_ptr;
     if(page_num> TABLE_MAX_PAGES){
         printf("Tried to fetch the page number out of bounds. %d > %d\n", page_num, TABLE_MAX_PAGES);
         exit(EXIT_FAILURE);

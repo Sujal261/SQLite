@@ -6,6 +6,7 @@
 #include"../include/utlis.h"
 #include"../include/compiler.h"
 #include"../include/table.h"
+#include"../include/row.h"
 
 
 int main(int argc, char* argv[]){

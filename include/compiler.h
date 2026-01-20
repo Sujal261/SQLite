@@ -1,6 +1,5 @@
 #pragma once
 #include"type.h"
-#include"utlis.h"
 #include"table.h"
 
 MetaCommandResult do_meta_action(InputBuffer* input_buffer, Table* table);

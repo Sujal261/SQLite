@@ -1,6 +1,6 @@
 #pragma once
 #include<stdint.h>
-
+#include"row.h"
 
 #define PAGE_SIZE  4096
 #define TABLE_MAX_PAGES  100
@@ -23,5 +23,5 @@ Table* db_open(const char* filename);
 Pager* pager_open(const char* filename);
 void pager_flush(Pager* pager, uint32_t page_num);
 void free_table(Table* table);
-void leaf_node_insert(Cursor* cursor,uint32_t key, Row* value);
-
+void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value);
+void leaf_node_split_and_insert(Cursor* cursor, uint32_t key, Row* value);
