@@ -4,6 +4,8 @@
 
 #define PAGE_SIZE  4096
 #define TABLE_MAX_PAGES  100
+#define LEAF_NODE_RIGHT_SPLIT (LEAF_NODE_MAX_CELLS+1)/2
+#define LEAF_NODE_LEFT_SPLIT (LEAF_NODE_MAX_CELLS+1)-LEAF_NODE_RIGHT_SPLIT
 
 typedef struct{
     int file_descriptor; 
@@ -25,3 +27,5 @@ void pager_flush(Pager* pager, uint32_t page_num);
 void free_table(Table* table);
 void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value);
 void leaf_node_split_and_insert(Cursor* cursor, uint32_t key, Row* value);
+uint32_t* get_unused_page_num(Pager* pager);
+void create_new_node_root(Table* table, uint32_t right_child_page_num);
