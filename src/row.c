@@ -12,6 +12,8 @@
 #include"../include/type.h"
 
 Cursor* table_start(Table* table){
+
+
     Cursor* cursor = malloc(sizeof(Cursor));
     cursor->table = table; 
     cursor->page_num = table->root_page_num; 
@@ -108,7 +110,7 @@ void print_row(Row* row){
 }
 void* get_page(void* pager_ptr, uint32_t page_num){
     Pager* pager = (Pager*)pager_ptr;
-    if(page_num> TABLE_MAX_PAGES){
+    if(page_num>= TABLE_MAX_PAGES){
         printf("Tried to fetch the page number out of bounds. %d > %d\n", page_num, TABLE_MAX_PAGES);
         exit(EXIT_FAILURE);
     }

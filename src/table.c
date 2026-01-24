@@ -27,13 +27,6 @@ void db_close(Table* table){
         printf("Error closing db file:\n");
         exit(EXIT_FAILURE);
     }
-    for(uint32_t i=0; i<TABLE_MAX_PAGES;i++){
-        void* page = pager->pages[i];
-        if(page){
-            free(page);
-            pager->pages[i]= NULL; 
-               }
-    }
     free(pager);
     free(table);
 
@@ -94,6 +87,7 @@ void pager_flush(Pager* pager, uint32_t page_num){
 void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value){
     void* node = get_page(cursor->table->pager, cursor->page_num);
     uint32_t num_cells = *leaf_node_num_cells(node);
+    uint32_t val = LEAF_NODE_MAX_CELLS;
     if(num_cells >= LEAF_NODE_MAX_CELLS){
         leaf_node_split_and_insert(cursor, key, value);
         return;
@@ -147,7 +141,7 @@ void leaf_node_split_and_insert(Cursor* cursor, uint32_t key, Row* value){
 
 
 }
-uint32_t* get_unused_page_num(Pager* pager){
+uint32_t get_unused_page_num(Pager* pager){
     return pager->num_pages;
 
 }
@@ -158,10 +152,10 @@ void create_new_root_node(Table* table, uint32_t right_child_page_num){
     uint32_t left_child_page_num = get_unused_page_num(table->pager);
     void* left_child = get_page(table->pager, left_child_page_num);
     memcpy(left_child, root, PAGE_SIZE);
-    set_node_root(left_child, false);
+    set_root_node(left_child, false);
 
     initialize_internal_node(root);
-    set_node_root(root, true);
+    set_root_node(root, true);
     *internal_node_num_keys(root) = 1;
     *internal_node_child(root, 0) = left_child_page_num;
     uint32_t left_child_max_key = get_node_max_key(left_child);
@@ -171,8 +165,8 @@ void create_new_root_node(Table* table, uint32_t right_child_page_num){
 }
 
 uint32_t* internal_node_num_keys(void* node){
-    return (char*)node+INTERNAL_NODE_NUM_KEYS_OFFSET;
 
+    return (uint32_t*)((char*)node+INTERNAL_NODE_NUM_KEYS_OFFSET);
 }
 
 uint32_t* internal_node_child(void* node, uint32_t child_num){
@@ -191,17 +185,17 @@ uint32_t* internal_node_child(void* node, uint32_t child_num){
 
 }
 uint32_t* internal_node_cell(void* node, uint32_t cell_num){
-    return (char*)node+INTERNAL_NODE_HEADER_SIZE+cell_num* INTERNAL_NODE_CELL_SIZE;
+    return (uint32_t*)((char*)node+INTERNAL_NODE_HEADER_SIZE+cell_num* INTERNAL_NODE_CELL_SIZE);
 }
 
 uint32_t* internal_node_key(void* node, uint32_t key_num){
 
-    return internal_node_cell(node, key_num)+INTERNAL_NODE_CHILD_SIZE;
+    return (uint32_t*)((char*)internal_node_cell(node, key_num)+INTERNAL_NODE_CHILD_SIZE);
 
 }
 
 uint32_t* internal_node_right_child(void* node){
-    return (char*)node+INTERNAL_NODE_RIGHT_CHILD_OFFEST;
+    return (uint32_t*)((char*)node+INTERNAL_NODE_RIGHT_CHILD_OFFSET);
 
 }
 

@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/src/a",   // executable
-            "args": ["sadb"],                        // command-line args
+            "args": ["sujaldb"],                        // command-line args
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/src",
             "environment": [],
