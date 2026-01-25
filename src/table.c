@@ -87,7 +87,7 @@ void pager_flush(Pager* pager, uint32_t page_num){
 void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value){
     void* node = get_page(cursor->table->pager, cursor->page_num);
     uint32_t num_cells = *leaf_node_num_cells(node);
-    uint32_t val = LEAF_NODE_MAX_CELLS;
+
     if(num_cells >= LEAF_NODE_MAX_CELLS){
         leaf_node_split_and_insert(cursor, key, value);
         return;
@@ -104,6 +104,7 @@ void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value){
 }
 
 void leaf_node_split_and_insert(Cursor* cursor, uint32_t key, Row* value){
+    uint32_t index_within_node =0;
     void* old_node = get_page(cursor->table->pager, cursor->page_num);
     uint32_t new_page_num = get_unused_page_num(cursor->table->pager);
     void* new_node = get_page(cursor->table->pager, new_page_num);
@@ -112,10 +113,12 @@ void leaf_node_split_and_insert(Cursor* cursor, uint32_t key, Row* value){
         void* destination_node;
         if(i>=LEAF_NODE_LEFT_SPLIT){
             destination_node = new_node;
+            index_within_node = i-7;
         }else{
             destination_node = old_node;
+            index_within_node = i;
         }
-        uint32_t index_within_node = i % LEAF_NODE_CELL_SIZE;
+       
         void* destination = leaf_node_cell(destination_node, index_within_node);
         if(i == cursor->cell_num){
             serialize_row(value, destination);
@@ -210,10 +213,10 @@ uint32_t get_node_max_key(void* node){
 
 }
 bool is_root_node(void* root){
-    uint8_t value= *((uint8_t*)((char*)root+IS_ROOT_OFFEST));
+    uint8_t value= *((uint8_t*)((char*)root+IS_ROOT_OFFSET));
     return (bool)value;
 }
 void set_root_node(void* node, bool is_root){
     uint8_t value = is_root;
-    (*(uint8_t*)((char*)node+IS_ROOT_OFFEST))=value;
+    (*(uint8_t*)((char*)node+IS_ROOT_OFFSET))=value;
 }

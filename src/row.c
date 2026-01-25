@@ -67,7 +67,7 @@ Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key){
 }
 
 NodeType get_node_type(void* node){
-    uint8_t value = *((uint8_t*)(node+NODE_TYPE_OFFSET));
+    uint8_t value = *((uint8_t*)((char*)node+NODE_TYPE_OFFSET));
     return (NodeType)value;
 }
 
@@ -117,6 +117,7 @@ void* get_page(void* pager_ptr, uint32_t page_num){
     if(pager->pages[page_num]==NULL){
         //Cache miss Allocate memory and load from file.
         void* page = malloc(PAGE_SIZE);
+        uint32_t length = pager->file_length;
         uint32_t num_pages = pager->file_length/PAGE_SIZE;
 
         if(pager->file_length % PAGE_SIZE){

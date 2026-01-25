@@ -23,7 +23,7 @@ void initialize_leaf_node(void* node){
 
 void set_node_type(void* node, NodeType type){
     uint8_t value = type;
-    *((uint8_t*)(node+NODE_TYPE_OFFSET)) = value;
+    *((uint8_t*)((char*)node+NODE_TYPE_OFFSET)) = value;
 }
 void initialize_internal_node(void* node){
     set_node_type(node, NODE_INTERNAL);
