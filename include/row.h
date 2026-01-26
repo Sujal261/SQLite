@@ -36,6 +36,7 @@ typedef struct Table Table;
 Cursor* table_start(Table* table);
 Cursor* table_find(Table* table, uint32_t key);
 Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key);
+Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key);
 void serialize_row(Row* source, void* destination);
 
 void deserialize_row(void* source, Row* destination);
