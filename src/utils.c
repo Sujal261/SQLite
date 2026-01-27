@@ -65,12 +65,12 @@ void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_level){
 }
 
 void print_constants() {
-    printf("PAGE_SIZE: %lu\n", PAGE_SIZE);
-    printf("TABLE_MAX_PAGES: %lu\n", TABLE_MAX_PAGES);
+    printf("PAGE_SIZE: %u\n", PAGE_SIZE);
+    printf("TABLE_MAX_PAGES: %u\n", TABLE_MAX_PAGES);
 
     printf("\n=== Common Node Header ===\n");
     printf("NODE_TYPE_SIZE: %lu\n", NODE_TYPE_SIZE);
-    printf("NODE_TYPE_OFFSET: %lu\n", NODE_TYPE_OFFSET);
+    printf("NODE_TYPE_OFFSET: %u\n", NODE_TYPE_OFFSET);
     printf("IS_ROOT_SIZE: %lu\n", IS_ROOT_SIZE);
     printf("IS_ROOT_OFFSET: %lu\n", IS_ROOT_OFFSET);
     printf("PARENT_POINTER_SIZE: %lu\n", PARENT_POINTER_SIZE);
@@ -84,7 +84,7 @@ void print_constants() {
 
     printf("\n=== Leaf Node Body ===\n");
     printf("LEAF_NODE_KEY_SIZE: %lu\n", LEAF_NODE_KEY_SIZE);
-    printf("LEAF_NODE_KEY_OFFSET: %lu\n", LEAF_NODE_KEY_OFFSET);
+    printf("LEAF_NODE_KEY_OFFSET: %u\n", LEAF_NODE_KEY_OFFSET);
     printf("LEAF_NODE_VALUE_SIZE: %lu\n", LEAF_NODE_VALUE_SIZE);
     printf("LEAF_NODE_VALUE_OFFSET: %lu\n", LEAF_NODE_VALUE_OFFSET);
     printf("LEAF_NODE_CELL_SIZE: %lu\n", LEAF_NODE_CELL_SIZE);

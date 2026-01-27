@@ -30,6 +30,7 @@ void initialize_internal_node(void* node){
     set_node_type(node, NODE_INTERNAL);
     set_root_node(node, false);
     *internal_node_num_keys(node)=0;
+    *internal_node_right_child(node) = INVALID_PAGE_NUM;
 }
 uint32_t* leaf_node_next_leaf(void* node){
     return (uint32_t*)((char*)node+LEAF_NODE_NEXT_LEAF_OFFSET);

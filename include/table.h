@@ -19,7 +19,8 @@
 #define INTERNAL_NODE_KEY_SIZE sizeof(uint32_t)
 #define INTERNAL_NODE_CHILD_SIZE sizeof(uint32_t)
 #define INTERNAL_NODE_CELL_SIZE (INTERNAL_NODE_KEY_SIZE+INTERNAL_NODE_CHILD_SIZE)
-
+#define INTERNAL_NODE_MAX_CELLS 3
+#define INVALID_PAGE_NUM UINT32_MAX
 
 typedef struct{
     int file_descriptor; 
@@ -52,3 +53,8 @@ uint32_t  get_node_max_key(void* node);
 bool is_root_node(void* node); 
 uint32_t* internal_node_cell(void* node, uint32_t cell_num);
 void set_root_node(void* node, bool is_root);
+uint32_t* node_parent(void* node);
+void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key);
+void internal_node_insert(Table* table, uint32_t parent_page_num, uint32_t child_page_num);
+uint32_t internal_node_find_child(void* node, uint32_t key);
+void internal_node_split_and_insert(Table* table, uint32_t parent_page_num, uint32_t child_page_num);
