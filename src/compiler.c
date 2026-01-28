@@ -75,12 +75,10 @@ ExecuteResult execute_insert(Statement* statement, Table* table){
     Row* row_to_insert = &(statement->row_to_insert);
     uint32_t key_to_insert = row_to_insert->id ;
     Cursor* cursor = table_find(table, key_to_insert);
-    if(cursor->cell_num < num_cells){
-        uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
-        if(key_at_index == key_to_insert){
-            return EXECUTE_DUPLICATE_KEY;
-        }
-    }
+    uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
+    if(key_at_index == key_to_insert){
+        return EXECUTE_DUPLICATE_KEY;
+     }
     leaf_node_insert(cursor, row_to_insert->id, row_to_insert);
     free(cursor);
     return EXECUTE_SUCCESS;

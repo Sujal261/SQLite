@@ -49,7 +49,7 @@ uint32_t* internal_node_num_keys(void* node);
 uint32_t* internal_node_child(void* node, uint32_t child_num);
 uint32_t* internal_node_key(void* node, uint32_t key_num);
 uint32_t* internal_node_right_child(void* node);
-uint32_t  get_node_max_key(void* node);
+uint32_t  get_node_max_key(Pager* pager,void* node);
 bool is_root_node(void* node); 
 uint32_t* internal_node_cell(void* node, uint32_t cell_num);
 void set_root_node(void* node, bool is_root);

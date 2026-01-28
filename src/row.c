@@ -66,7 +66,7 @@ Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key){
     uint32_t max_index = num_keys;
     while(min_index!=max_index){
         uint32_t index = (min_index+max_index)/2;
-        uint32_t key_to_right = *internal_node_cell(node, index);
+        uint32_t key_to_right = *internal_node_key(node, index);
         if(key_to_right>=key){
             max_index = index;
         }else{
