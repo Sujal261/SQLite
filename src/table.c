@@ -102,6 +102,11 @@ void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value){
     *(leaf_node_key(node, cursor->cell_num))= key; 
     serialize_row(value, leaf_node_value(node,cursor->cell_num ));
 }
+void leaf_node_update(Cursor* cursor, uint32_t key, Row* value){
+    void* node = get_page(cursor->table->pager, cursor->page_num);
+    serialize_row(value, leaf_node_value(node, cursor->cell_num));
+}
+
 
 void leaf_node_split_and_insert(Cursor* cursor, uint32_t key, Row* value){
     uint32_t index_within_node =0;
@@ -325,6 +330,7 @@ uint32_t* internal_node_child(void* node, uint32_t child_num){
     }
 
     
+
 
 }
 uint32_t* internal_node_cell(void* node, uint32_t cell_num){

@@ -54,6 +54,30 @@ PrepareResult prepare_insert(InputBuffer* input_buffer, Statement* statement){
     return PREPARE_SUCCESS;
 }
 
+PrepareResult prepare_update(InputBuffer* input_buffer, Statement* statement){
+    statement->type = STATEMENT_UPDATE; 
+    char* keyword = strtok(input_buffer->buffer," ");
+    char* id_string = strtok(NULL," ");
+    char* username = strtok(NULL, " ");
+    char* email = strtok(NULL, " ");
+    if(id_string == NULL || username == NULL || email == NULL){
+        return PREPARE_SYNTAX_ERROR;
+    }
+    int id = atoi(id_string);
+    if(id<0){
+        return PREPARE_NEGATIVE_ID;
+    }
+    if(strlen(username)>(COLUMN_USERNAME_SIZE+1)){
+        return PREPARE_STRING_TOO_LONG;
+    }
+    if(strlen(email)>(COLUMN_EMAIL_SIZE+1)){
+        return PREPARE_STRING_TOO_LONG;
+    }
+    statement->row_to_insert.id = id; 
+    strcpy(statement->row_to_insert.username, username);
+    strcpy(statement->row_to_insert.email, email);
+    return PREPARE_SUCCESS;
+}
 
 PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement){
     if(strncmp(input_buffer->buffer, "insert",6)==0){
@@ -67,6 +91,10 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
         statement->type = STATEMENT_CREATE;
         return PREPARE_SUCCESS;
     }
+    if(strncmp(input_buffer->buffer,"update",6)==0){
+        statement->type = STATEMENT_UPDATE;
+        return prepare_update(input_buffer,statement);
+    }
     return PREPARE_FAILURE;
 }
 ExecuteResult execute_insert(Statement* statement, Table* table){
@@ -75,7 +103,8 @@ ExecuteResult execute_insert(Statement* statement, Table* table){
     Row* row_to_insert = &(statement->row_to_insert);
     uint32_t key_to_insert = row_to_insert->id ;
     Cursor* cursor = table_find(table, key_to_insert);
-    uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
+    void* node_to_insert = get_page(table->pager, cursor->page_num);
+    uint32_t key_at_index = *leaf_node_key(node_to_insert, cursor->cell_num);
     if(key_at_index == key_to_insert){
         return EXECUTE_DUPLICATE_KEY;
      }
@@ -98,6 +127,23 @@ ExecuteResult execute_select(Statement* statement, Table* table){
 
 }
 
+ExecuteResult execute_update(Statement* statement, Table* table){
+    void* node = get_page(table->pager, table->root_page_num);
+    uint32_t num_cells = *leaf_node_num_cells(node);
+    Row* row_to_update = &(statement->row_to_insert);
+    uint32_t key_to_update = row_to_update->id;
+    Cursor* cursor = table_find(table, key_to_update);
+    void* node_to_update = get_page(table->pager, cursor->page_num);
+    uint32_t key_at_index = *leaf_node_key(node_to_update, cursor->cell_num);
+    if(key_at_index != key_to_update){
+        return EXECUTE_NO_KEY_TO_UPDATE;
+    }
+    leaf_node_update(cursor, row_to_update->id, row_to_update);
+    free(cursor);
+    return EXECUTE_SUCCESS;
+    
+}
+
 
 ExecuteResult execute_statement(Statement* statement, Table* table){
     switch(statement->type){
@@ -106,6 +152,9 @@ ExecuteResult execute_statement(Statement* statement, Table* table){
 
         case STATEMENT_SELECT:
         return execute_select(statement, table);
+
+        case STATEMENT_UPDATE:
+        return execute_update(statement, table);
    }
 }
 

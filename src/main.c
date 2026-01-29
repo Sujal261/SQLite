@@ -22,8 +22,6 @@ int main(int argc, char* argv[]){
         print_prompt(); 
         read_input(input_buffer); 
 
-        
-
         if(input_buffer->buffer[0] == '.'){
             switch(do_meta_action(input_buffer, table)){
                 case METACOMMAND_SUCCESS:
@@ -61,7 +59,8 @@ int main(int argc, char* argv[]){
             break;
             case EXECUTE_DUPLICATE_KEY:
             printf("Error: Duplicate Key.\n");
-            
+            case EXECUTE_NO_KEY_TO_UPDATE:
+            printf("Error: There is no key to update\n");
         }
     }
 }

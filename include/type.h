@@ -26,7 +26,8 @@ typedef enum{
 typedef enum{
     STATEMENT_INSERT, 
     STATEMENT_SELECT,
-    STATEMENT_CREATE
+    STATEMENT_CREATE,
+    STATEMENT_UPDATE
 
 } StatementType;
 
@@ -43,5 +44,6 @@ typedef struct{
 typedef enum{
     EXECUTE_SUCCESS, 
     EXECUTE_TABLE_FULL,
-    EXECUTE_DUPLICATE_KEY
+    EXECUTE_DUPLICATE_KEY,
+    EXECUTE_NO_KEY_TO_UPDATE
 }ExecuteResult;
