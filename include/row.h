@@ -29,6 +29,9 @@ typedef struct{
     char username[COLUMN_USERNAME_SIZE+1];
     char email[COLUMN_EMAIL_SIZE+1];
 }Row;
+typedef struct{
+    int id;
+}Delete;
 
 /* Forward declaration */
 typedef struct Table Table;
@@ -43,5 +46,5 @@ void deserialize_row(void* source, Row* destination);
 void* cursor_value(Cursor* cursor);
 void cursor_advance(Cursor* cursor);
 void print_row(Row* row);
-
+void free_row(void* source);
 void* get_page(void* pager, uint32_t page_num);

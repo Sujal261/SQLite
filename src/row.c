@@ -102,6 +102,13 @@ void deserialize_row(void* source, Row* destination){
     memcpy(&(destination->username), source+USERNAME_OFFSET, USERNAME_SIZE);
     memcpy(&(destination->email), source+EMAIL_OFFSET, EMAIL_SIZE);
 }
+
+void free_row(void* source){
+    memset(source+ID_OFFSET, 0, ID_SIZE);
+    memset(source+USERNAME_OFFSET, 0, USERNAME_SIZE);
+    memset(source+EMAIL_OFFSET, 0, EMAIL_SIZE);
+
+}
 // void* row_slot(struct Table* table, uint32_t row_num){
 //     uint32_t page_num = row_num/ROWS_PER_PAGE;
 //     void* page = get_page(table->pager, page_num);

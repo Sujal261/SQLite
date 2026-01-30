@@ -1,16 +1,16 @@
 # SQLite in C
 
-This repository contains a simple, lightweight clone of a SQLite-like database, written from the ground up in C. It demonstrates fundamental database concepts by implementing a B-Tree data structure for storage, a pager for managing memory and disk I/O, and a command-line REPL for interaction.
+This repository contains a simple, lightweight clone of a SQLite-like database, written in C. It demonstrates fundamental database concepts by implementing a B+Tree data structure for storage, a pager for managing memory and disk I/O, and a command-line REPL for interaction.
 
-The database supports basic `INSERT`, `SELECT`, and `UPDATE` operations on a single table with a predefined schema (`id`, `username`, `email`).
+The database supports basic `INSERT`, `SELECT`,`UPDATE` and `DELETE` operations on a single table with a predefined schema (`id`, `username`, `email`).
 
 ## Features
 
-- **B-Tree Data Structure:** Data is organized in a B-Tree to provide efficient insertions, searches, and ordered retrieval.
+- **B+Tree Data Structure:** Data is organized in a B-Tree to provide efficient insertions, searches, and ordered retrieval.
 - **Persistent Storage:** All data is saved to a disk file, ensuring durability between sessions.
 - **REPL Interface:** A simple Read-Eval-Print Loop (REPL) allows for interactive command execution.
-- **SQL-like Operations:** Supports `INSERT`, `SELECT`, and `UPDATE` statements.
-- **Meta-Commands:** Includes helper commands like `.btree` to visualize the tree structure, `.constants` to inspect internal memory layout, and `./exit` to safely close the database.
+- **SQL-like Operations:** Supports `INSERT`, `SELECT`,`UPDATE` and `DELETE` statements.
+- **Meta-Commands:** Includes helper commands like `.btree` to visualize the tree structure, `.constants` to inspect internal memory layout, and `./fexit` to safely close the database.
 
 ## Getting Started
 
@@ -61,6 +61,11 @@ db> select
 (1, sita_gita, sita_gita@example.com)
 (2, sita, sita@example.com)
 Executed
+db> delete 1
+Executed
+db> select
+(2,sita,sita@example.com)
+Executed
 db> ./exit
 ```
 
@@ -80,6 +85,10 @@ The database supports the following commands.
 - **`update <id> <new_username> <new_email>`**
   - Modifies the `username` and `email` for the row with the specified `id`.
   - Example: `update 3 some some@example.com`
+
+- **`delete <id>`**
+  - Deletes the row with `id`
+  - Example: `delete 1`
 
 ### Meta-Commands
 

@@ -59,8 +59,10 @@ int main(int argc, char* argv[]){
             break;
             case EXECUTE_DUPLICATE_KEY:
             printf("Error: Duplicate Key.\n");
-            case EXECUTE_NO_KEY_TO_UPDATE:
+            case EXECUTE_NO_KEY:
             printf("Error: There is no key to update\n");
+            case EXECUTE_NO_DATA:
+            printf("Error: There is no data to select\n");
         }
     }
 }

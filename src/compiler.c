@@ -79,6 +79,18 @@ PrepareResult prepare_update(InputBuffer* input_buffer, Statement* statement){
     return PREPARE_SUCCESS;
 }
 
+PrepareResult prepare_delete(InputBuffer* input_buffer, Statement* statement){
+    statement->type = STATEMENT_DELETE;
+    char* keyword = strtok(input_buffer->buffer," ");
+    char* id_string = strtok(NULL," ");
+    int id = atoi(id_string);
+    if(id<0){
+        return PREPARE_NEGATIVE_ID;
+    }
+    statement->del.id =id; 
+    return PREPARE_SUCCESS;
+}
+
 PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement){
     if(strncmp(input_buffer->buffer, "insert",6)==0){
         return prepare_insert(input_buffer, statement);
@@ -94,6 +106,11 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
     if(strncmp(input_buffer->buffer,"update",6)==0){
         statement->type = STATEMENT_UPDATE;
         return prepare_update(input_buffer,statement);
+    }
+    if(strncmp(input_buffer->buffer,"delete",6)==0){
+        statement->type = STATEMENT_DELETE;
+        return prepare_delete(input_buffer, statement);
+
     }
     return PREPARE_FAILURE;
 }
@@ -118,13 +135,16 @@ ExecuteResult execute_select(Statement* statement, Table* table){
 
     Row row; 
     while(!(cursor->end_of_table)){
+        void* node = get_page(table->pager, table->root_page_num);
+        if(*leaf_node_num_cells(node)==0){
+            return EXECUTE_NO_DATA;
+        }
         deserialize_row(cursor_value(cursor), &row);
         print_row(&row);
         cursor_advance(cursor);
     }
     free(cursor);
     return EXECUTE_SUCCESS;
-
 }
 
 ExecuteResult execute_update(Statement* statement, Table* table){
@@ -136,12 +156,29 @@ ExecuteResult execute_update(Statement* statement, Table* table){
     void* node_to_update = get_page(table->pager, cursor->page_num);
     uint32_t key_at_index = *leaf_node_key(node_to_update, cursor->cell_num);
     if(key_at_index != key_to_update){
-        return EXECUTE_NO_KEY_TO_UPDATE;
+        return EXECUTE_NO_KEY;
     }
     leaf_node_update(cursor, row_to_update->id, row_to_update);
     free(cursor);
     return EXECUTE_SUCCESS;
     
+}
+
+ExecuteResult execute_delete(Statement* statement, Table* table){
+    void* node = get_page(table->pager, table->root_page_num);
+    uint32_t num_cells = *leaf_node_num_cells(node);
+    Delete* row_to_delete = &(statement->del);
+    uint32_t key_to_delete = row_to_delete->id;
+    Cursor* cursor = table_find(table, key_to_delete);
+    void* node_to_delete = get_page(table->pager, cursor->page_num);
+    uint32_t key_at_index = *leaf_node_key(node_to_delete, cursor->cell_num);
+    if(key_at_index!= key_to_delete){
+        return EXECUTE_NO_KEY;
+    }
+    leaf_node_delete(cursor, row_to_delete->id);
+    free(cursor);
+    return EXECUTE_SUCCESS;
+
 }
 
 
@@ -155,6 +192,9 @@ ExecuteResult execute_statement(Statement* statement, Table* table){
 
         case STATEMENT_UPDATE:
         return execute_update(statement, table);
+
+        case STATEMENT_DELETE:
+        return execute_delete(statement, table);
    }
 }
 
