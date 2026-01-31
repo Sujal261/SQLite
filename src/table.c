@@ -375,8 +375,45 @@ void leaf_node_delete(Cursor* cursor, uint32_t row_to_delete){
         }
     }
     *(leaf_node_num_cells(node))-=1;
+
+    if(*(leaf_node_num_cells(node))<7){
+        merge_node_or_add_from_sibling(cursor);
+    }
+
     free_row(leaf_node_value(node, num_cells-1));
 }
+void merge_node_or_add_from_sibling(Cursor* cursor){
+    void* left_sibling = get_page(cursor->table->pager,cursor->page_num+1);
+    void* current = get_page(cursor->table->pager, cursor->page_num);
+    void* right_sibling = get_page(cursor->table->pager, cursor->page_num+2);
+    uint32_t left_num_cells = *leaf_node_num_cells(left_sibling);
+    uint32_t right_num_cells = *leaf_node_num_cells(right_sibling);
+    uint32_t num_cells = *leaf_node_num_cells(current);
+
+    if(left_num_cells>7){
+        for(uint32_t i =1; i<num_cells;i++){
+            memcpy(leaf_node_cell(current, i), leaf_node_cell(current, i-1), LEAF_NODE_CELL_SIZE);
+        }
+        memcpy(leaf_node_cell(current,0), leaf_node_cell(left_sibling, left_num_cells), LEAF_NODE_CELL_SIZE);
+        *leaf_node_num_cells(current)+=1;
+        *leaf_node_num_cells(left_sibling)-=1;
+         *node_parent(left_sibling) = cursor->table->root_page_num;
+        free_row(left_sibling);
+    }else if(right_num_cells>7){
+        memcpy(leaf_node_cell(current, num_cells+1), leaf_node_cell(right_sibling, 0), LEAF_NODE_CELL_SIZE);
+        for(uint32_t i =0;i<right_num_cells-1;i++){
+            memcpy(leaf_node_cell(right_sibling,i), leaf_node_cell(right_sibling,i+1), LEAF_NODE_CELL_SIZE);
+        }
+        *leaf_node_num_cells(current)+=1;
+        *leaf_node_num_cells(right_sibling)-=1;
+        free_row(right_sibling);
+
+    }
+
+
+}
+
+
 // void leaf_node_insert(Cursor* cursor, uint32_t key, Row* value){
 //     void* node = get_page(cursor->table->pager, cursor->page_num);
 //     uint32_t num_cells = *leaf_node_num_cells(node);

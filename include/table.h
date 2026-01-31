@@ -61,3 +61,5 @@ void internal_node_split_and_insert(Table* table, uint32_t parent_page_num, uint
 void leaf_node_update(Cursor* cursor, uint32_t key, Row* value);
 
 void leaf_node_delete(Cursor* cursor, uint32_t row_to_delete);
+void merge_node_or_add_from_sibling(Cursor* cursor);
+

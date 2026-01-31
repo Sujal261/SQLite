@@ -61,9 +61,7 @@ void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_level){
             print_tree(pager, child, indentation_level+1);
             break;
     
-    }
-
-   
+    }  
 }
 
 void print_constants() {
