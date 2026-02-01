@@ -14,7 +14,7 @@
 #define EMAIL_OFFSET  (USERNAME_OFFSET+USERNAME_SIZE)
 #define ROW_SIZE  (ID_SIZE+USERNAME_SIZE+EMAIL_SIZE)
 
-/* Forward declaration to avoid circular dependency */
+//For the streak
 struct Table;
 
 typedef struct{
