@@ -75,6 +75,9 @@ Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key){
     }
     uint32_t child_num = *internal_node_child(node, min_index);
     void* child = get_page(table->pager, child_num);
+    void *child1 = get_page(table->pager, 2);
+    NodeType val1 = get_node_type(child1);
+    NodeType val = get_node_type(child);
     switch(get_node_type(child)){
         case NODE_LEAF:
         return leaf_node_find(table, child_num, key);
