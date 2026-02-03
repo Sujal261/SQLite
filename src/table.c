@@ -281,13 +281,14 @@ void create_new_root_node(Table* table, uint32_t right_child_page_num){
     void* right_child = get_page(table->pager, right_child_page_num);
     uint32_t left_child_page_num = get_unused_page_num(table->pager);
     void* left_child = get_page(table->pager, left_child_page_num);
+    initialize_leaf_node(left_child);
     if(get_node_type(root) ==NODE_INTERNAL){
         initialize_internal_node(right_child); 
         initialize_internal_node(left_child);
     }
     memcpy(left_child, root, PAGE_SIZE);
-    set_root_node(left_child, false);
-
+    // set_root_node(left_child, false);
+    
     initialize_internal_node(root);
     set_root_node(root, true);
     *internal_node_num_keys(root) = 1;
@@ -378,9 +379,10 @@ void leaf_node_delete(Cursor* cursor, uint32_t row_to_delete){
 
     if(*(leaf_node_num_cells(node))<7){
         merge_node_or_add_from_sibling(cursor);
-    }
+    }else{
 
     free_row(leaf_node_value(node, num_cells-1));
+    }
 }
 void merge_node_or_add_from_sibling(Cursor* cursor){
     void* left_sibling = get_page(cursor->table->pager,cursor->page_num+1);
@@ -398,14 +400,16 @@ void merge_node_or_add_from_sibling(Cursor* cursor){
         memcpy(leaf_node_cell(current,0), leaf_node_cell(left_sibling, left_num_cells), LEAF_NODE_CELL_SIZE);
         *leaf_node_num_cells(current)+=1;
         *leaf_node_num_cells(left_sibling)-=1;
-        NodeType value = get_node_type(left_sibling);
-        NodeType value1 = get_node_type(current);
+        // NodeType value = get_node_type(left_sibling);
+        // NodeType value1 = get_node_type(current);
         //  *node_parent(left_sibling) = cursor->table->root_page_num;
         uint32_t parent_page_num = *node_parent(left_sibling);
        uint32_t new_max = get_node_max_key(cursor->table->pager,left_sibling);
        void* parent = get_page(cursor->table->pager, parent_page_num);
        update_internal_node_key(parent,left_max_key_old, new_max);
-        free_row(left_sibling);
+        free_row(leaf_node_value(left_sibling, left_num_cells-1));
+        //  NodeType value = get_node_type(left_sibling);
+        //  NodeType value1 = get_node_type(current);
     }
     // }else if(right_num_cells>7){
     //     memcpy(leaf_node_cell(current, num_cells+1), leaf_node_cell(right_sibling, 0), LEAF_NODE_CELL_SIZE);
