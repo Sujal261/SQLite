@@ -63,3 +63,4 @@ void leaf_node_update(Cursor* cursor, uint32_t key, Row* value);
 void leaf_node_delete(Cursor* cursor, uint32_t row_to_delete);
 void merge_node_or_add_from_sibling(Cursor* cursor);
 
+void update_root_node_key(void* node, uint32_t old_key, uint32_t new_key);

@@ -115,6 +115,7 @@ PrepareResult prepare_statement(InputBuffer* input_buffer, Statement* statement)
     return PREPARE_FAILURE;
 }
 ExecuteResult execute_insert(Statement* statement, Table* table){
+
     void* node = get_page(table->pager, table->root_page_num);
     uint32_t num_cells = *leaf_node_num_cells(node);
     Row* row_to_insert = &(statement->row_to_insert);
@@ -130,6 +131,8 @@ ExecuteResult execute_insert(Statement* statement, Table* table){
     return EXECUTE_SUCCESS;
 
 }
+
+
 ExecuteResult execute_select(Statement* statement, Table* table){
     Cursor* cursor = table_start(table);
 

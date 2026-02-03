@@ -170,9 +170,14 @@ uint32_t get_unused_page_num(Pager* pager){
 }
 
 void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key){
+    uint32_t num_cells = *internal_node_num_keys(node);
     uint32_t old_child_index = internal_node_find_child(node,old_key );
     *internal_node_key(node, old_child_index) = new_key;
 }
+// void update_root_node_key(void* node, uint32_t old_key, uint32_t new_key){
+//     uint32_t new_child_index = internal_node_find_child(node, new_key);
+//     *internal_node_key(node, new_child_index) = new_key;
+// }
 
 uint32_t internal_node_find_child(void* node, uint32_t key){
     uint32_t num_keys = *internal_node_num_keys(node);
@@ -394,22 +399,18 @@ void merge_node_or_add_from_sibling(Cursor* cursor){
     uint32_t num_cells = *leaf_node_num_cells(current);
 
     if(left_num_cells>7){
-        for(uint32_t i =1; i<=num_cells;i++){
+        for(uint32_t i =num_cells; i>=1;i--){
             memcpy(leaf_node_cell(current, i), leaf_node_cell(current, i-1), LEAF_NODE_CELL_SIZE);
         }
-        memcpy(leaf_node_cell(current,0), leaf_node_cell(left_sibling, left_num_cells), LEAF_NODE_CELL_SIZE);
+        memcpy(leaf_node_cell(current,0), leaf_node_cell(left_sibling, left_num_cells-1), LEAF_NODE_CELL_SIZE);
         *leaf_node_num_cells(current)+=1;
         *leaf_node_num_cells(left_sibling)-=1;
-        // NodeType value = get_node_type(left_sibling);
-        // NodeType value1 = get_node_type(current);
-        //  *node_parent(left_sibling) = cursor->table->root_page_num;
+
         uint32_t parent_page_num = *node_parent(left_sibling);
        uint32_t new_max = get_node_max_key(cursor->table->pager,left_sibling);
        void* parent = get_page(cursor->table->pager, parent_page_num);
        update_internal_node_key(parent,left_max_key_old, new_max);
         free_row(leaf_node_value(left_sibling, left_num_cells-1));
-        //  NodeType value = get_node_type(left_sibling);
-        //  NodeType value1 = get_node_type(current);
     }
     // }else if(right_num_cells>7){
     //     memcpy(leaf_node_cell(current, num_cells+1), leaf_node_cell(right_sibling, 0), LEAF_NODE_CELL_SIZE);
