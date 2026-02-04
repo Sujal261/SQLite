@@ -179,6 +179,7 @@ void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key){
 //     *internal_node_key(node, new_child_index) = new_key;
 // }
 
+
 uint32_t internal_node_find_child(void* node, uint32_t key){
     uint32_t num_keys = *internal_node_num_keys(node);
     uint32_t min_index = 0; 
@@ -186,15 +187,17 @@ uint32_t internal_node_find_child(void* node, uint32_t key){
     while(min_index<max_index){
         uint32_t mid_index = (min_index+max_index)/2;
         uint32_t mid_key = *internal_node_key(node, mid_index);
-        if(key<mid_key){
+        if(key == mid_key)
+        {
+         return min_index;
+        }
+        else if(key<mid_key){
             max_index = mid_index;
         }else{
             min_index = max_index+1;
         }
     }
-    return min_index;
-
-
+    
 }
 
 void internal_node_insert(Table* table, uint32_t parent_page_num, uint32_t child_page_num){
@@ -385,18 +388,26 @@ void leaf_node_delete(Cursor* cursor, uint32_t row_to_delete){
     if(*(leaf_node_num_cells(node))<7){
         merge_node_or_add_from_sibling(cursor);
     }else{
-
+    
     free_row(leaf_node_value(node, num_cells-1));
     }
 }
 void merge_node_or_add_from_sibling(Cursor* cursor){
     void* left_sibling = get_page(cursor->table->pager,cursor->page_num+1);
     void* current = get_page(cursor->table->pager, cursor->page_num);
-    // void* right_sibling = get_page(cursor->table->pager, cursor->page_num+2);
+    uint32_t* num =leaf_node_next_leaf(current); 
+    
     uint32_t left_num_cells = *leaf_node_num_cells(left_sibling);
-    // uint32_t right_num_cells = *leaf_node_num_cells(right_sibling);
+    uint32_t right_num_cells = 0;
     uint32_t left_max_key_old = get_node_max_key(cursor->table->pager, left_sibling); 
     uint32_t num_cells = *leaf_node_num_cells(current);
+    uint32_t right_max_key_old =0;
+    void* right_sibling=NULL;
+    if(num!=NULL){
+         right_sibling = get_page(cursor->table->pager, *num);
+        right_num_cells = *leaf_node_num_cells(right_sibling);
+        right_max_key_old = get_node_max_key(cursor->table->pager, right_sibling);
+    }
 
     if(left_num_cells>7){
         for(uint32_t i =num_cells; i>=1;i--){
@@ -412,16 +423,28 @@ void merge_node_or_add_from_sibling(Cursor* cursor){
        update_internal_node_key(parent,left_max_key_old, new_max);
         free_row(leaf_node_value(left_sibling, left_num_cells-1));
     }
-    // }else if(right_num_cells>7){
-    //     memcpy(leaf_node_cell(current, num_cells+1), leaf_node_cell(right_sibling, 0), LEAF_NODE_CELL_SIZE);
-    //     for(uint32_t i =0;i<right_num_cells-1;i++){
-    //         memcpy(leaf_node_cell(right_sibling,i), leaf_node_cell(right_sibling,i+1), LEAF_NODE_CELL_SIZE);
-    //     }
-    //     *leaf_node_num_cells(current)+=1;
-    //     *leaf_node_num_cells(right_sibling)-=1;
-    //     free_row(right_sibling);
+    else if(right_num_cells>7){
+        memcpy(leaf_node_cell(current, num_cells), leaf_node_cell(right_sibling, 0), LEAF_NODE_CELL_SIZE);
+        for(uint32_t i =0;i<right_num_cells-1;i++){
+            memcpy(leaf_node_cell(right_sibling,i), leaf_node_cell(right_sibling,i+1), LEAF_NODE_CELL_SIZE);
+        }
+        *leaf_node_num_cells(current)+=1;
+        *leaf_node_num_cells(right_sibling)-=1;
+        uint32_t parent_page_num = *node_parent(right_sibling);
+        uint32_t new_max = get_node_max_key(cursor->table->pager, right_sibling);
+        void* parent = get_page(cursor->table->pager, parent_page_num);
+        update_internal_node_key(parent, right_max_key_old, new_max);
+        free_row(leaf_node_value(right_sibling, right_num_cells-1));
 
-    // }
+    }else{
+         for(uint32_t i=0; i<7;i++){
+            memcpy(leaf_node_cell(left_sibling, 7+i), leaf_node_cell(right_sibling, i), LEAF_NODE_CELL_SIZE);
+            *leaf_node_num_cells(left_sibling)+=1;
+            *leaf_node_num_cells(right_sibling)-=1;
+            free_row(leaf_node_value(right_sibling, i));
+         }
+
+    }
 
 
 }
